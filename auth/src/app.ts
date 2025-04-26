@@ -5,7 +5,7 @@ import { DataSource } from "typeorm";
 export default class App{
     public app: Express | null = null;
     
-    public port = 3000
+    public port = 2000
     
     public host = "0.0.0.0"
 
@@ -22,7 +22,7 @@ export default class App{
         console.log("conected")
 
 this.app.listen(3000, '0.0.0.0', () => {
-  console.log('Listening on port 3000!!');
+  console.log('Listening on port 2000!!');
 });
     }
 }

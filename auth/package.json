@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --config nodemon.json src/app.ts",
-    "start": "npm run build && node dist/src/app.js"
+    "start": "ts-node src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,12 +16,12 @@
     "mysql2": "^3.14.0",
     "nodemon": "^3.1.9",
     "pg": "^8.15.6",
-    "ts-node": "^10.9.2",
     "typeorm": "^0.3.22",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
-    "@types/jsonwebtoken": "^9.0.9"
+    "@types/jsonwebtoken": "^9.0.9",
+    "ts-node": "^10.9.2"
   }
 }
