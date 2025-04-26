@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-   "dev": "nodemon --config nodemon.json src/app.ts",
-"start":  "npm run build && node dist/src/app.js" 
-
+    "dev": "nodemon --config nodemon.json src/app.ts",
+    "start": "npm run build && node dist/src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +13,11 @@
   "dependencies": {
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
     "nodemon": "^3.1.9",
+    "pg": "^8.15.6",
     "ts-node": "^10.9.2",
+    "typeorm": "^0.3.22",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
