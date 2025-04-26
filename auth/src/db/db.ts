@@ -11,6 +11,7 @@ class DBClass {
 
     this.connection = await AppDataSource.initialize();
 
+    console.log("conecccccccc")
     return this.connection;
   }
 
@@ -22,11 +23,11 @@ class DBClass {
     const config: DataSourceOptions = {
       name: "default",
       type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "root",
-      password: "root",
-      database: "pgdocker",
+      host: process.env.PG_HOST,
+      port: Number(process.env.PG_PORT),
+      username: process.env.PG_USER,
+      password: process.env.PG_PASSWORD,
+      database: process.env.PG_DATABASE,
       synchronize: false,
       logging: false,
       entities: [`${__dirname}/../entity/**/*{.ts,.js}`],

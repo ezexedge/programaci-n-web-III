@@ -11,7 +11,7 @@ const Task = mongoose.model("Task")
 
 const app = express();
 
-//database()
+database()
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

@@ -1,6 +1,32 @@
 version: '3.8'
 
 services:
+  postgres-auth:
+    image: postgres:15
+    container_name: postgres-auth-dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+      POSTGRES_DB: auth_db
+    restart: unless-stopped
+
+  mongodb-tasks:
+    image: mongo:6.0
+    container_name: mongodb-tasks-dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_tasks_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongo_root_password
+      MONGO_INITDB_DATABASE: tasks_db
+    restart: unless-stopped
+
   auth-app:
     container_name: auth-dev
     build:
@@ -13,7 +39,24 @@ services:
       - /usr/src/app/node_modules
     environment:
       - NODE_ENV=development
+      - DB_TYPE=postgres
+      - PG_HOST=postgres-auth
+      - PG_USER=auth_user
+      - PG_PASSWORD=auth_password
+      - PG_DATABASE=auth_db
+      - PG_PORT=5432
+      - JWT_SECRET=my_jwt_secret_key
+      - JWT_EXPIRES_IN=1h
+    depends_on:
+      - postgres-auth
     command: npm run dev
+    develop:  # <-- Nueva sección para watch
+      watch:
+        - action: sync
+          path: ./auth/src
+          target: /usr/src/app/src
+        - action: rebuild
+          path: ./auth/package.json
 
   tasks-app:
     container_name: tasks-dev
@@ -21,10 +64,48 @@ services:
       context: ./tasks
       dockerfile: Dockerfile.dev
     ports:
-      - "2000:2000" 
+      - "2000:2000"
     volumes:
       - ./tasks:/usr/src/app
       - /usr/src/app/node_modules
     environment:
       - NODE_ENV=development
+      - DB_TYPE=mongodb
+      - MONGO_URI=mongodb://root:mongo_root_password@mongodb-tasks:27017/tasks_db?authSource=admin
+    depends_on:
+      - mongodb-tasks
     command: npm run dev
+    develop:  # <-- Nueva sección para watch
+      watch:
+        - action: sync
+          path: ./tasks/src
+          target: /usr/src/app/src
+        - action: rebuild
+          path: ./tasks/package.json
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin_password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres-auth
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express-dev
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mongo_root_password
+      ME_CONFIG_MONGODB_URL: mongodb://root:mongo_root_password@mongodb-tasks:27017/
+    depends_on:
+      - mongodb-tasks
+
+volumes:
+  postgres_auth_data:
+  mongodb_tasks_data:

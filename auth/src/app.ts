@@ -17,8 +17,7 @@ export default class App{
         this.app.use(express.json());
         this.app.set("json spaces", 2);
         this.app.use(express.urlencoded({ extended: false }));
-
-//        this.connection = await db.connectDb();
+        this.connection = await db.connectDb();
         console.log("conected")
 
 this.app.listen(3000, '0.0.0.0', () => {
