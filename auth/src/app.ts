@@ -18,11 +18,11 @@ export default class App{
         this.app.set("json spaces", 2);
         this.app.use(express.urlencoded({ extended: false }));
 
-        this.connection = await db.connectDb();
+//        this.connection = await db.connectDb();
         console.log("conected")
 
 this.app.listen(3000, '0.0.0.0', () => {
-  console.log('Listening on port 2000!!');
+  console.log('Listening on port 3000!!');
 });
     }
 }

@@ -1,10 +1,11 @@
 {
   "name": "auth-pw3",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
     "dev": "nodemon --config nodemon.json src/app.ts",
-    "start": "ts-node src/app.ts"
+    "build": "tsc",
+    "start": "npm run build && node dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -14,14 +15,14 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.0",
-    "nodemon": "^3.1.9",
     "pg": "^8.15.6",
-    "typeorm": "^0.3.22",
-    "typescript": "^5.8.3"
+    "typeorm": "^0.3.22"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
+    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2",
     "@types/express": "^5.0.1",
-    "@types/jsonwebtoken": "^9.0.9",
-    "ts-node": "^10.9.2"
+    "@types/jsonwebtoken": "^9.0.9"
   }
 }
