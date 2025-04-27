@@ -28,17 +28,15 @@ spec:
           ports:
             - containerPort: 3000
 
----
 apiVersion: v1
 kind: Service
-metadata: 
-  name: auth-srv
+metadata:
+  name: auth-srv  # ¡Este es el Service faltante!
 spec:
   selector:
-    app: auth
+    app: auth  # Debe coincidir con el label del Pod
   ports:
-    - name: auth
-      protocol: TCP
+    - protocol: TCP
       port: 3000
       targetPort: 3000
   type: ClusterIP

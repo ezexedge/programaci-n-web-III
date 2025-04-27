@@ -3,7 +3,7 @@ import { database } from './db.js';
 import bodyParser from 'body-parser';
 import mongoose from "mongoose";
 
-const port = process.env.PORT || 2000
+const port = process.env.PORT || 3000
 const Task = mongoose.model("Task")
 
 
