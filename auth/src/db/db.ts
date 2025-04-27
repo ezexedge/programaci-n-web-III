@@ -4,14 +4,9 @@ class DBClass {
   private connection: DataSource;
 
   async connectDb(): Promise<DataSource> {
-
-    const pgConfig = this.getPostgresConfig();
-
-    const AppDataSource = new DataSource(pgConfig);
-
+    const AppDataSource = new DataSource(this.getPostgresConfig());
     this.connection = await AppDataSource.initialize();
-
-    console.log("conecccccccc")
+    console.log("PostgreSQL connected successfully");
     return this.connection;
   }
 
@@ -19,25 +14,24 @@ class DBClass {
     return this.connection;
   }
 
-  getPostgresConfig() {
-    const config: DataSourceOptions = {
-      name: "default",
+  getPostgresConfig(): DataSourceOptions {
+    const connectionUrl = process.env.DATABASE_URL;
+
+    return {
       type: "postgres",
-      host: process.env.PG_HOST,
-      port: Number(process.env.PG_PORT),
-      username: process.env.PG_USER,
-      password: process.env.PG_PASSWORD,
-      database: process.env.PG_DATABASE,
+      url: connectionUrl,  
       synchronize: false,
       logging: false,
       entities: [`${__dirname}/../entity/**/*{.ts,.js}`],
       migrations: ["src/migration/**/*.ts"],
       subscribers: ["src/subscriber/**/*.ts"],
-      schema: "public"
+      schema: "public",
+      extra: {
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      }
     };
-    return config;
+  }
 }
 
-}
 const db = new DBClass();
 export default db;
