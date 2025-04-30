@@ -16,8 +16,13 @@ spec:
         - name: tasks
           image: ezeedge/tasks-app:latest
           env:
+            - name: SERVICE_NAME
+              value: "tasks-service"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://jaeger-collector:4318"
             - name: MONGO_URI
               value: 'mongodb://tasks-mongo-srv:27017/auth'
+              
             # - name: JWT_KEY
             #   valueFrom:
             #     secretKeyRef:

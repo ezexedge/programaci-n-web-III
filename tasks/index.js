@@ -1,12 +1,11 @@
+import "./tracing.js"
 import express from 'express';
 import { database } from './db.js';
 import bodyParser from 'body-parser';
 import mongoose from "mongoose";
-
-const port = process.env.PORT || 3000
+const port = 3000
 const Task = mongoose.model("Task")
-
-
+import { trace } from '@opentelemetry/api';
 
 
 const app = express();
@@ -26,8 +25,11 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/tasks", async (req, res) => {
 
+  const span = trace.getActiveSpan()
  const tasks = await Task.find()
-
+if(span){
+  span.setAttribute("data",JSON.stringify(tasks))
+}
  res.status(200).json(tasks)
   });
 

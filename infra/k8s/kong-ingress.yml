@@ -3,37 +3,22 @@ kind: Ingress
 metadata:
   name: ms-pw3-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "kong"
 spec:
   rules:
-    - host: ms-pw3.dev
-      http:
-        paths:
-          - path: /auth
-            pathType: Prefix
-            backend:
-              service:
-                name: auth-srv
-                port:
-                  number: 3000
-          - path: /tasks
-            pathType: Prefix
-            backend:
-              service:
-                name: tasks-srv
-                port:
-                  number: 3000
-          - path: /prometheus
-            pathType: Prefix
-            backend:
-              service:
-                name: prometheus-srv
-                port:
-                  number: 9090
-          - path: /grafana
-            pathType: Prefix
-            backend:
-              service:
-                name: grafana-srv
-                port:
-                  number: 3000
+  - http:
+      paths:
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-srv
+            port:
+              number: 3000
+      - path: /tasks
+        pathType: Prefix
+        backend:
+          service:
+            name: tasks-srv
+            port:
+              number: 3000
