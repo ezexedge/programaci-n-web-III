@@ -22,4 +22,11 @@ spec:
             name: tasks-srv
             port:
               number: 3000
+      - path: /imagestore
+        pathType: Prefix
+        backend:
+          service:
+            name: imagestore-srv
+            port:
+              number: 3000
               

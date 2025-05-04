@@ -22,6 +22,10 @@ build:
         manual:
           - src: "dist/src/**/*.js"
             dest: .
+    - image: ezeedge/imagestore-app
+      context: imagestore
+      docker:
+        dockerfile: Dockerfile
 deploy:
   kubectl:
     manifests:
