@@ -18,6 +18,12 @@ spec:
           env:
             - name: DATABASE_URL
               value: 'postgresql://admin:password@auth-postgres-srv:5432/auth'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
+            - name: OTEL_SERVICE_NAME
+              value: "tasks-service"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "deployment.environment=production"
             # - name: JWT_KEY
             #   valueFrom:
             #     secretKeyRef:

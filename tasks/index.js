@@ -1,4 +1,3 @@
-import "./tracing.js"
 import express from 'express';
 import { database } from './db.js';
 import bodyParser from 'body-parser';

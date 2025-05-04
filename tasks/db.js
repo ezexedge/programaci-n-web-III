@@ -4,7 +4,7 @@ import Task from "./models/Task.js";
 export async function database() {
     try {
         
-        const mongoUri = "mongodb://localhost:27017/my_database";
+        const mongoUri = process.env.MONGO_URI;
 
         await mongoose.connect(mongoUri);
         console.log("Conectado a MongoDB°°!!!!!");
