@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: uploads-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,22 +26,26 @@ spec:
       containers:
         - name: imagestore
           image: ezeedge/imagestore-app:latest
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
           ports:
-            - containerPort: 80
----
+            - containerPort: 3000
+          volumeMounts:
+            - name: uploads-volume
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads-volume
+          persistentVolumeClaim:
+            claimName: uploads-pvc
+
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: imagestore-srv
+  name: imagestore-srv 
 spec:
   selector:
     app: imagestore
   ports:
-    - name: imagestore
-      protocol: TCP
-      port: 80
-      targetPort: 80
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

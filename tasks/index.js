@@ -1,73 +1,108 @@
 import express from 'express';
 import { database } from './db.js';
-import bodyParser from 'body-parser';
 import mongoose from "mongoose";
-const port = 3000
-const Task = mongoose.model("Task")
-import { trace } from '@opentelemetry/api';
+import multer from 'multer';
+import axios from 'axios';
+import FormData from 'form-data';
 
-
+const port = 3000;
+const Task = mongoose.model("Task");
 const app = express();
 
-database()
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten imágenes'), false);
+    }
+  }
+});
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+database();
 
-app.use(express.text());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-
-
-
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/tasks", async (req, res) => {
-
-  const span = trace.getActiveSpan()
- const tasks = await Task.find()
-if(span){
-  span.setAttribute("data",JSON.stringify(tasks))
-}
- res.status(200).json(tasks)
-  });
-
-  app.post("/tasks",  async (req, res) => {
-    try{
-    const task  = req.body
-
-    const newTask = new Task({...task})
-
-    await newTask.save();
-
-    res.status(200).json(newTask)
-    }
-    catch (error) {
-        res.status(500).send(error);
-    }
+  const tasks = await Task.find();
+  res.status(200).json(tasks);
 });
 
+app.post("/tasks", upload.single('image'), async (req, res) => {
+  try {
+    const taskData = req.body;
+    
+    const newTask = new Task({...taskData});
+    await newTask.save();
+    
+    if (req.file) {
+      try {
+        const url = process.env.IMAGESTORE_URL;
+        
+        const formData = new FormData();
+        
+        formData.append('image', req.file.buffer, {
+          filename: req.file.originalname,
+          contentType: req.file.mimetype
+        });
+        
+        formData.append('taskId', newTask._id.toString());
+        
+        console.log("Enviando imagen a:", `${url}/imagestore`);
+        
+        const imageResponse = await axios.post(
+          `${url}/imagestore`,
+          formData,
+          {
+            headers: {
+              ...formData.getHeaders()
+            },
+          }
+        );
+        
+        console.log("Respuesta del servicio de imágenes:", imageResponse.data);
+        
+        if (imageResponse.data && imageResponse.data.filename) {
+          newTask.image = imageResponse.data.filename;
+          await newTask.save();
+        }
+      } catch (imageError) {
+        console.error("Error al procesar la imagen:", imageError.message);
+      }
+    }
+    
+    res.status(200).json(newTask);
+  } catch (error) {
+    console.error("Error al crear la tarea:", error);
+    res.status(500).json({
+      message: "Error al crear la tarea",
+      error: error.message
+    });
+  }
+});
 
 app.delete("/tasks/:id", async (req, res) => {
-    try {
-        const id = req.params.id;
-       const taskDeleted = await Task.findByIdAndDelete(id);
-       
-        res.status(200).json(taskDeleted)
-
-    } catch (error) {
-        res.status(500).send(error);
-    }
+  try {
+    const id = req.params.id;
+    const taskDeleted = await Task.findByIdAndDelete(id);
+    res.status(200).json(taskDeleted);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
-
 
 app.patch("/tasks", async (req, res) => {
   try {
-    const {title,description,id} = req.body;
-    
+    const {title, description, id} = req.body;
     const updatedTask = await Task.findByIdAndUpdate(
       id, 
-      {title,description},
+      {title, description},
       { new: true }
     );
     
@@ -76,11 +111,11 @@ app.patch("/tasks", async (req, res) => {
     }
     
     res.status(200).json(updatedTask);
-
   } catch (error) {
     res.status(500).send(error);
   }
 });
+
 app.listen(port, '0.0.0.0', () => {
-  console.log('Listening on port 2000!!');
+  console.log(`Listening on port ${port}!!`);
 });

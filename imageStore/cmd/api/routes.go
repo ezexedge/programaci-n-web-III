@@ -19,7 +19,7 @@ func (app *Config) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	mux.Route("/api/image", func(r chi.Router) {
+	mux.Route("/imagestore", func(r chi.Router) {
 		r.Post("/", app.uploadImage)
 
 		r.Route("/{id}", func(r chi.Router) {
