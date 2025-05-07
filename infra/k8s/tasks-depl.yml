@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks
+  template:
+    metadata:
+      labels:
+        app: tasks
+    spec:
+      containers:
+        - name: tasks
+          image: ezeedge/tasks-app:latest
+          env:
+            - name: SERVICE_NAME
+              value: "tasks-service"
+            - name: MONGO_URI
+              value: 'mongodb://tasks-mongo-srv:27017/auth'
+            - name: IMAGESTORE_URL
+              value: "http://imagestore-srv:3000"
+              
+            # - name: JWT_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jwt-secret
+            #       key: JWT_KEY
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: tasks-srv
+spec:
+  selector:
+    app: tasks
+  ports:
+    - name: tasks
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

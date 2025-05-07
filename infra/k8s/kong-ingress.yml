@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ms-pw3-ingress
+  annotations:
+    kubernetes.io/ingress.class: "kong"
+
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-srv
+            port:
+              number: 3000
+      - path: /tasks
+        pathType: Prefix
+        backend:
+          service:
+            name: tasks-srv
+            port:
+              number: 3000
+      - path: /imagestore
+        pathType: Prefix
+        backend:
+          service:
+            name: imagestore-srv
+            port:
+              number: 3000
+              

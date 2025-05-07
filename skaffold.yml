@@ -1,0 +1,33 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: ms-auth
+build:
+  local:
+    push: false  
+  artifacts:
+    - image: ezeedge/tasks-app
+      context: tasks  
+      docker:
+        dockerfile: Dockerfile 
+      sync:
+        manual:
+          - src: "./index.js"  
+            dest: .  
+    - image: ezeedge/auth-app
+      context: auth
+      docker: 
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "dist/src/**/*.js"
+            dest: .
+    - image: ezeedge/imagestore-app
+      context: imagestore
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/* 
+      

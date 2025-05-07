@@ -11,7 +11,10 @@ const taskSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-
+    image: {
+        type: String,
+        trim: true
+    },
 });
 
 const Task = mongoose.model('Task', taskSchema);
