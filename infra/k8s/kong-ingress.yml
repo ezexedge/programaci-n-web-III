@@ -4,6 +4,7 @@ metadata:
   name: ms-pw3-ingress
   annotations:
     kubernetes.io/ingress.class: "kong"
+
 spec:
   rules:
   - http:

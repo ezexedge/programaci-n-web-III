@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import multer from 'multer';
 import axios from 'axios';
 import FormData from 'form-data';
+import { authorizeRole, verifyToken } from './auth.middleware.js';
 
 const port = 3000;
 const Task = mongoose.model("Task");
@@ -29,12 +30,12 @@ database();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/tasks", async (req, res) => {
+app.get("/tasks",verifyToken, authorizeRole(['admin', 'subscriber']), async (req, res) => {
   const tasks = await Task.find();
   res.status(200).json(tasks);
 });
 
-app.post("/tasks", upload.single('image'), async (req, res) => {
+app.post("/tasks",verifyToken, authorizeRole(['admin', 'subscriber']) ,upload.single('image'), async (req, res) => {
   try {
     const taskData = req.body;
     

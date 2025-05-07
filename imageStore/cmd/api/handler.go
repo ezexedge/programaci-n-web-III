@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -32,43 +30,19 @@ func (app *Config) uploadImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uploadDir := "./uploads"
-	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
-		render.JSON(w, r, map[string]string{
-			"error": "Error al crear directorio para imágenes",
-		})
-		return
-	}
-
 	timestamp := time.Now().UnixNano()
 	extension := filepath.Ext(handler.Filename)
 	fileName := fmt.Sprintf("%d%s", timestamp, extension)
-	filePath := filepath.Join(uploadDir, fileName)
 
-	dst, err := os.Create(filePath)
-	if err != nil {
-		render.JSON(w, r, map[string]string{
-			"error": "Error al guardar la imagen",
-		})
-		return
-	}
-	defer dst.Close()
+	log.Printf("Imagen procesada: %s (tamaño: %d bytes, tipo: %s)",
+		fileName, handler.Size, fileType)
 
-	if _, err = io.Copy(dst, file); err != nil {
-		render.JSON(w, r, map[string]string{
-			"error": "Error al guardar la imagen",
-		})
-		return
-	}
-
-	imageURL := fmt.Sprintf("/uploads/%s", fileName)
-
-	log.Println("Imagen guardada exitosamente: %s", filePath)
 	render.JSON(w, r, map[string]interface{}{
 		"status":   "success",
-		"imageUrl": imageURL,
 		"filename": fileName,
 		"size":     handler.Size,
+		"fileType": fileType,
+		"origName": handler.Filename,
 	})
 }
 
