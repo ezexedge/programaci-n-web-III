@@ -59,7 +59,7 @@ class DBClass {
         const email = "admin@example.com";
         const role = "admin";
         
-        const hashedPassword = await bcrypt.hash("1234", 10);
+        const hashedPassword = await bcrypt.hash("123456", 10);
         
         const newUser = userRepository.create({
             username,

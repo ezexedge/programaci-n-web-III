@@ -13,7 +13,7 @@ export class RateLimiter {
       max: 2,
       standardHeaders: true,
       legacyHeaders: false,
-    //  skipSuccessfulRequests: true,
+      skipSuccessfulRequests: true,
       handler: (req: Request, res: Response) => {
         logger.error(`reintendo desde el IP: ${req.ip}`);
         return res.status(429).json({
