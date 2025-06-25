@@ -1,0 +1,33 @@
+_format_version: "3.0"
+plugins:
+  - name: request-transformer
+    service: auth-service
+    config:
+      add:
+        headers:
+          - "Authorization: Bearer $cookie_token"
+
+services:
+  - name: auth-service
+    url: http://auth:3000
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+        strip_path: false
+
+  - name: tasks-service
+    url: http://tasks:3000
+    routes:
+      - name: tasks-route
+        paths:
+          - /tasks
+        strip_path: false
+
+  - name: imagestore-service
+    url: http://imagestore:80
+    routes:
+      - name: imagestore-route
+        paths:
+          - /imagestore
+        strip_path: false
