@@ -19,12 +19,12 @@ func (app *Config) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	mux.Route("/imagestore", func(r chi.Router) {
-		r.Post("/", app.uploadImage)
+	mux.Post("/imagestore", app.uploadImage)
 
-		r.Route("/{id}", func(r chi.Router) {
-			r.Get("/", app.uploadImage)
-		})
+	fs := http.StripPrefix("/images/", http.FileServer(http.Dir("./uploads")))
+	mux.Get("/images/*", func(w http.ResponseWriter, r *http.Request) {
+		fs.ServeHTTP(w, r)
 	})
+
 	return mux
 }
