@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  kong:
+    image: kong:3.4
+    container_name: kong
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8443:8443"
+      - "8444:8444"
+    networks:
+      - kong-net
+
+  auth:
+    build:
+      context: ./auth
+    container_name: auth
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./auth:/app
+    depends_on:
+      - mongo
+      - postgres
+    networks:
+      - kong-net
+
+  tasks:
+    build:
+      context: ./tasks
+    container_name: tasks
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./tasks:/app
+    depends_on:
+      - mongo
+      - postgres
+    networks:
+      - kong-net
+
+  imagestore:
+    build:
+      context: ./imagestore
+    container_name: imagestore
+    ports:
+      - "3003:80"
+    volumes:
+      - ./data/uploads:/app/uploads
+    networks:
+      - kong-net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  
+    stdin_open: true
+    tty: true
+    networks:
+      - kong-net
+    depends_on:
+      - auth
+      - tasks
+    command: ["npm", "run", "dev", "--", "--host"]
+
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - kong-net
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kong-net
+
+networks:
+  kong-net:
+
+volumes:
+  mongo_data:
+  postgres_data:

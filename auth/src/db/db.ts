@@ -21,7 +21,8 @@ class DBClass {
   }
 
   getPostgresConfig(): DataSourceOptions {
-    const connectionUrl = process.env.DATABASE_URL;
+
+const connectionUrl = "postgres://admin:admin@postgres:5432/mydb";
 
     return {
       type: "postgres",

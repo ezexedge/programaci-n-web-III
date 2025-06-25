@@ -11,25 +11,24 @@ declare global {
 }
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
-    const authHeader = req.headers.authorization;
-  
-    if (!authHeader) {
-      res.status(403).json({ message: 'Token requerido' });
-      return;
-    }
-  
-    const token = authHeader.split(' ')[1];
-    const secretKey = process.env.JWT_SECRET || 'your_secret_key';
-  
-    try {
-      const decoded = jwt.verify(token, secretKey);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Token inválido' });
-    }
-  };
-  
+  const token = req.cookies.token;
+console.log("XCVCVC",req.cookies)
+  if (!token) {
+    res.status(403).json({ message: 'Token requerido' });
+    return;
+  }
+
+  const secretKey = process.env.JWT_SECRET || 'your_secret_key';
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token inválido' });
+  }
+};
+
 
 
   export const authorizeRole = (roles: string[]) => {

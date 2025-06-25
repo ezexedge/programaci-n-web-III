@@ -1,24 +1,25 @@
 import jwt from 'jsonwebtoken';
 
-export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    res.status(403).json({ message: 'Token requerido' });
-    return;
+export function verifyToken(req, res, next) {
+  const token = req.session?.token || req.cookies?.token;
+  console.log("xxxx",token)
+  console.log("session",req.session)
+
+ const secret =  process.env.JWT_SECRET || "your_secret_key"
+  if (!token) {
+    return res.status(401).json({ message: "Token no encontrado" });
   }
-
-  const token = authHeader.split(' ')[1];
-  const secretKey = process.env.JWT_SECRET || 'your_secret_key';
 
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token, secret);
     req.user = decoded;
     next();
-  } catch (error) {
-    res.status(401).json({ message: 'Token inválido' });
+  } catch (err) {
+    return res.status(401).json({ message: "Token inválido" });
   }
-};
+}
+
 
 export const authorizeRole = (roles) => {
   return (req, res, next) => {
