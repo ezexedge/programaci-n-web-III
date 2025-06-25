@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Trabajo Práctico Final – Programación Web III
 
 Esta aplicación web está inspirada en Reddit y simula una plataforma donde los usuarios pueden publicar contenido, visualizar posteos y gestionar imágenes.
@@ -55,9 +54,3 @@ Para iniciar sesión como **administrador**, usá:
 ```bash
 📧 Email:    admin@example.com
 🔐 Contraseña: 123456
-=======
-# ..
-
-![Diagrama de Arquitectura](https://raw.githubusercontent.com/ezexedge/programaci-n-web-III/dev/image.png)
-
->>>>>>> 263b2a9a28ceef9e4f85a52eacfeae95506bfc3f
