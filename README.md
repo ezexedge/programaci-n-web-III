@@ -10,14 +10,15 @@ La app sigue una **arquitectura de microservicios orientada a contenedores**, in
 
 Los roles disponibles son:
 
-- **Suscriptor**: puede ver contenido.
-- **Administrador**: puede crear y eliminar publicaciones, además de acceder a opciones especiales.
+- **Suscriptor**: puede ver contenido público. Los usuarios nuevos registrados ingresan con este rol por defecto.
+- **Administrador**: puede crear y eliminar publicaciones, además de acceder a funciones adicionales de gestión.
 
 ---
 
 ## 🎯 Funcionalidades principales
 
 - Autenticación con JWT
+- Registro de nuevos usuarios (rol suscriptor)
 - Gestión de tareas (posteos tipo Reddit)
 - Subida y visualización de imágenes
 - Frontend responsivo en React
@@ -47,10 +48,13 @@ Una vez levantado el proyecto:
 
 ---
 
-## 🧪 Usuario demo para login
+## 🧪 Usuarios para login
 
-Para iniciar sesión como **administrador**, usá:
+Puedes:
+
+- ✅ **Crear un nuevo usuario** desde el formulario de registro. Este se creará como **suscriptor** por defecto.
+- ✅ O iniciar sesión como **administrador** con este usuario de prueba:
 
 ```bash
-📧 Email:    admin@example.com
+📧 Email: admin@example.com
 🔐 Contraseña: 123456
